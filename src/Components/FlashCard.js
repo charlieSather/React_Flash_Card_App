@@ -1,14 +1,23 @@
 import React from 'react';
+import Button from 'react-bootstrap/Button';
 import './FlashCard.css';
 
 class FlashCard extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            word: props.word,
-            definition: props.definition,
+            word: "",
+            definition: "",
             isFlipped: false,
         };
+    }
+
+    componentDidMount(){
+        this.setState({
+            word: this.props.word,
+            definition: this.props.definition,
+            isFlipped: false,
+        });
     }
 
     handleClick(){
@@ -37,7 +46,7 @@ class FlashCard extends React.Component{
                 <h1>{status}</h1>
                 <h3>{content}</h3>
 
-                <button onClick={() => this.handleClick()}>Flip</button>
+                <Button className='btn-primary' onClick={() => this.handleClick()}>Flip Card</Button>
             </div>
 
 
