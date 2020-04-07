@@ -21,18 +21,54 @@ class Stack extends React.Component {
             activeCard: 0,
         });
     }
-    renderCard(card, i){
-        return (
-          <FlashCard key={i} word={card.word} definition={card.definition}  />
-        );
+    next = () => {
+        let activeCard = this.state.activeCard;
+        if(activeCard === this.state.cards.length - 1){
+            return;
+        }
+        else{
+            this.setState({
+                activeCard: ++activeCard,
+            });
+        }
+    }
+    previous = () => {
+        let activeCard = this.state.activeCard;
+        if(activeCard === 0){
+            return;
+        }
+        else{
+            this.setState({
+                activeCard: --activeCard,
+            });
+        }
+    }
+    renderCard(){
+        let activeCardIndex = this.state.activeCard;
+        console.log(activeCardIndex);
+        let card = this.state.cards.find((el,index) => index === activeCardIndex);
+        if(card){
+            return <FlashCard key={card.id} word={card.word} definition={card.definition}/>;
+        }
+        else{
+            return <div></div>;
+        }
       }
 
     render() {
-        let cards = this.state.cards.slice();
+        // let cards = this.state.cards.slice();
+        let card = this.renderCard();
+        let currentIndex = this.state.activeCard;
         
         return (
             <div className="card-container">
-                { cards.map((card, i) => this.renderCard(card, i)) }
+                {/* { cards.map((card, i) => this.renderCard(card, i)) } */}
+
+                <button className='btn btn-primary' onClick={this.previous}>previous</button>
+                {card}
+                <button className='btn btn-primary' onClick={this.next}>next</button>
+
+                <div>{currentIndex + 1}/{this.state.cards.length}</div>
             </div>
            
         );

@@ -89,7 +89,6 @@ class App extends React.Component {
   }
   renderCardForm = () => {
     let stacks = this.state.stacks.slice();
-    console.log(this.state.stacks.length);
     if (this.state.stacks.length > 0) {
       return <CardForm className="card-form" stacks={stacks} submit={(e) => this.handleCardSubmit(e)} />
     } else {
@@ -100,33 +99,44 @@ class App extends React.Component {
     return <StackForm />
   }
   handleClick() {
+    document.querySelector(".form-container").classList.toggle('hidden');
 
   }
 
   render() {
     let stack = this.renderStack();
     let cardForm;
+    //let stackForm;
     if (this.state.stacks.length > 0) {
       cardForm = this.renderCardForm();
+      // stackForm = this.renderStackForm();
     }
     // let cardForm = this.renderCardForm();
-    console.log(cardForm);
 
     return (
       <div className='container'>
         <div className='row'>
           <div className='col-sm-4 '>
-            <select className="form-control" onChange={(event) => this.handleSelectStack(event)}>
+            <select className="form-control" defaultValue='0' onChange={(event) => this.handleSelectStack(event)}>
+              <option value='0' disabled hidden>Choose stack</option>
               {this.state.stacks.map(x => <option value={x.id} key={x.id}>{x.title}</option>)}
             </select>
           </div>
           <div className='col-sm-8 d-flex justify-content-end'>
             <Button className="m-1" onClick={this.handleClick}>Add Card</Button>
-            <Button className="m-1" onClick={this.handleClick}>Add Stack</Button>
+            {/* <Button className="m-1" onClick={this.handleClick}>Add Stack</Button> */}
           </div>
         </div>
-        {stack}
-        {cardForm}
+        <div className='row stack-container'>
+          <div className='col-sm-12'>
+            {stack}
+          </div>
+        </div>
+        <div className='row form-container hidden'>
+          <div className='col-sm-3'></div>
+          <div className='col-sm-6'>{cardForm}</div>
+          <div className='col-sm-3'></div>
+        </div>
       </div>
     );
   }
