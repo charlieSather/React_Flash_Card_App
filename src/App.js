@@ -3,6 +3,9 @@ import './App.css';
 import axios from 'axios';
 import Stack from './Components/Stack';
 import Button from 'react-bootstrap/Button';
+import StackForm from './Components/StackForm';
+import CardForm from './Components/CardForm';
+
 
 class App extends React.Component {
   state = {
@@ -39,6 +42,43 @@ class App extends React.Component {
     });
   }
 
+  handleCardSubmit = (e) => {
+    let form = e.target;
+    e.preventDefault();
+    let data = {
+      word: form['Word'].value,
+      definition: form['Definition'].value,
+      stackId: parseInt(form['StackId'].value),
+    };
+
+    axios.post("https://localhost:44393/api/card", data)
+      .then(response => {
+        let card = response.data;
+        this.setState(x => {
+          let stacks = this.state.stacks.slice();
+          stacks.map(x => {
+            if (x.id === card.stackId) {
+              x.cards.push(card);
+            }
+            return x;
+          });
+          return { stacks }
+        });
+
+        form.reset();
+      })
+      .catch(error => console.log(error));
+  }
+
+  handleStackSubmit = (e) => {
+    let data = {
+      title: e.target['Title'].value,
+    };
+    axios.post("https://localhost:44393/api/stack", data);
+    e.preventDefault();
+
+  }
+
   renderStack = () => {
     if (this.state.selectedStack > 0) {
       let stack = this.state.stacks.find(x => x.id === this.state.selectedStack);
@@ -47,12 +87,31 @@ class App extends React.Component {
       return <></>;
     }
   }
-  renderForm = () => {
+  renderCardForm = () => {
+    let stacks = this.state.stacks.slice();
+    console.log(this.state.stacks.length);
+    if (this.state.stacks.length > 0) {
+      return <CardForm className="card-form" stacks={stacks} submit={(e) => this.handleCardSubmit(e)} />
+    } else {
+      return <div>hello</div>;
+    }
+  }
+  renderStackForm = () => {
+    return <StackForm />
+  }
+  handleClick() {
 
   }
 
   render() {
     let stack = this.renderStack();
+    let cardForm;
+    if (this.state.stacks.length > 0) {
+      cardForm = this.renderCardForm();
+    }
+    // let cardForm = this.renderCardForm();
+    console.log(cardForm);
+
     return (
       <div className='container'>
         <div className='row'>
@@ -62,15 +121,19 @@ class App extends React.Component {
             </select>
           </div>
           <div className='col-sm-8 d-flex justify-content-end'>
-            <Button className="m-1">Add Card</Button>
-            <Button className="m-1">Add Stack</Button>
+            <Button className="m-1" onClick={this.handleClick}>Add Card</Button>
+            <Button className="m-1" onClick={this.handleClick}>Add Stack</Button>
           </div>
         </div>
         {stack}
+        {cardForm}
       </div>
     );
   }
 
 }
+
+
+
 
 export default App;
